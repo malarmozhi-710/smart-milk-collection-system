@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmer Dashboard — DairySmart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-logo">🥛</div>
+      <div class="brand">DairySmart</div>
+    </div>
+    <nav class="nav-section">
+      <div class="nav-label">Farmer</div>
+      <div class="nav-item active" data-page="dashboard"><span class="icon">🏠</span> My Dashboard</div>
+      <div class="nav-item" data-page="profile"><span class="icon">👤</span> My Profile</div>
+      <div class="nav-item" data-page="history"><span class="icon">📋</span> Collection History</div>
+      <div class="nav-item" data-page="payments"><span class="icon">💰</span> Payment History</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">F</div>
+        <div>
+          <div class="user-name" id="userName">Farmer</div>
+          <div class="user-role">Farmer Member</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title" id="topbarTitle">My Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="loadFarmerDashboard()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title" id="welcomeMsg">Welcome, Farmer</div>
+            <div class="page-sub" id="welcomeSub">Here's your milk collection summary</div>
+          </div>
+        </div>
+
+        <div class="mini-kpi" id="farmerKpis">
+          <div class="loading-overlay"><div class="spinner"></div> Loading…</div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card full">
+            <div class="chart-title">Monthly Earnings (6 months)</div>
+            <div class="chart-sub">Total amount earned per month</div>
+            <div class="chart-wrap"><canvas id="farmerChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="table-card" style="margin-top:18px">
+          <div class="table-toolbar">
+            <div><strong>Today's Collection</strong></div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Date</th><th>Session</th><th>Quantity</th><th>Fat %</th><th>Rate/L</th><th>Amount</th></tr></thead>
+              <tbody id="todayBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-profile">
+        <div class="page-header"><div><div class="page-title">My Profile</div><div class="page-sub">Your registration details</div></div></div>
+        <div class="chart-card" id="profileCard" style="max-width:600px"></div>
+      </section>
+
+      <section class="page" id="page-history">
+        <div class="page-header"><div><div class="page-title">Collection History</div><div class="page-sub">All your milk collection records</div></div></div>
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Date</th><th>Session</th><th>Quantity (L)</th><th>Fat %</th><th>Rate/L</th><th>Amount</th></tr></thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-payments">
+        <div class="page-header"><div><div class="page-title">Payment History</div><div class="page-sub">Your payment records</div></div></div>
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Total Earned</th><th>Paid</th><th>Pending</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="payBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/api.js"></script>
+<script src="js/farmer.js"></script>
+</body>
+</html>
+

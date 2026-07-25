@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — DairySmart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-visual">
+      <div class="auth-visual-content">
+        <div class="brand" style="color:#fff;margin-bottom:28px">
+          <div class="brand-logo" style="background:rgba(255,255,255,0.15)">🥛</div>
+          <span>DairySmart</span>
+        </div>
+        <h1>Smart Milk Collection & Dairy Management</h1>
+        <p>Digitizing village milk collection with automated quality analysis and instant payment calculation.</p>
+        <div class="auth-visual-stats">
+          <div class="auth-visual-stat">
+            <div class="n">20+</div>
+            <div class="l">Farmers</div>
+          </div>
+          <div class="auth-visual-stat">
+            <div class="n">Auto</div>
+            <div class="l">Fat analyzer</div>
+          </div>
+          <div class="auth-visual-stat">
+            <div class="n">Real-time</div>
+            <div class="l">Payments</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to your DairySmart account</p>
+
+        <div class="role-tabs" id="roleTabs">
+          <button type="button" class="role-tab active" data-role="ADMIN">
+            <span class="icon">👨‍💼</span>
+            <span>Admin / Operator</span>
+          </button>
+          <button type="button" class="role-tab" data-role="FARMER">
+            <span class="icon">🧑‍🌾</span>
+            <span>Farmer</span>
+          </button>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label" id="userLabel">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password" autocomplete="current-password" required>
+          </div>
+          <div class="form-row">
+            <label class="checkbox">
+              <input type="checkbox" id="remember"> Remember me
+            </label>
+            <a href="#" class="link" onclick="return false">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center" id="loginBtn">
+            <span id="loginText">Sign in</span>
+          </button>
+        </form>
+
+        <div class="demo-box">
+          <strong>🔑 Demo credentials</strong>
+          <div style="margin-top:8px">
+            <div class="cred"><span>Admin</span><b>admin / admin123</b></div>
+            <div class="cred"><span>Farmer</span><b>M001 / farmer123</b></div>
+          </div>
+          <div style="margin-top:8px;color:var(--text-muted)">Farmers M001–M020 all use password <b>farmer123</b></div>
+        </div>
+
+        <p style="text-align:center;margin-top:18px;font-size:14px;color:var(--text-muted)">
+          <a href="index.html" class="link">← Back to home</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script src="js/api.js"></script>
+  <script>
+    let selectedRole = 'ADMIN';
+    const tabs = document.querySelectorAll('.role-tab');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      selectedRole = t.dataset.role;
+      document.getElementById('userLabel').textContent = selectedRole === 'ADMIN' ? 'Username' : 'Farmer ID (e.g. M001)';
+      document.getElementById('username').placeholder = selectedRole === 'ADMIN' ? 'Enter username' : 'Enter Farmer ID';
+      if (selectedRole === 'FARMER') document.getElementById('username').value = 'M001';
+      else document.getElementById('username').value = 'admin';
+      document.getElementById('password').value = selectedRole === 'ADMIN' ? 'admin123' : 'farmer123';
+    }));
+
+    // restore remembered
+    const rem = localStorage.getItem('rememberUser');
+    if (rem) { document.getElementById('username').value = rem; document.getElementById('remember').checked = true; }
+    document.getElementById('password').value = 'admin123';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      document.getElementById('loginText').innerHTML = '<span class="spinner"></span>';
+      try {
+        const res = await api.post('/api/auth/login', { username, password });
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('role', res.role);
+        localStorage.setItem('username', res.username);
+        if (res.farmer_id) localStorage.setItem('farmer_id', res.farmer_id);
+        if (remember) localStorage.setItem('rememberUser', username);
+        else localStorage.removeItem('rememberUser');
+        toast('Login successful! Redirecting…', 'success');
+        setTimeout(() => {
+          window.location.href = res.role === 'ADMIN' ? 'admin.html' : 'farmer.html';
+        }, 600);
+      } catch (err) {
+        toast(err.message || 'Login failed', 'error');
+        btn.disabled = false;
+        document.getElementById('loginText').textContent = 'Sign in';
+      }
+    });
+  </script>
+</body>
+</html>

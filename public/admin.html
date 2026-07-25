@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — DairySmart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-logo">🥛</div>
+      <div class="brand">DairySmart</div>
+    </div>
+    <nav class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
+      <div class="nav-item" data-page="collection"><span class="icon">🥛</span> Milk Collection</div>
+      <div class="nav-item" data-page="farmers"><span class="icon">👥</span> Farmers</div>
+      <div class="nav-item" data-page="payments"><span class="icon">💰</span> Payments</div>
+      <div class="nav-label">Insights</div>
+      <div class="nav-item" data-page="reports"><span class="icon">📄</span> Reports</div>
+      <div class="nav-item" data-page="settings"><span class="icon">⚙️</span> Settings</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div class="user-name" id="userName">admin</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" placeholder="Search…" id="globalSearch">
+        </div>
+        <div style="position:relative">
+          <button class="icon-btn" id="notifBtn">🔔<span class="badge-dot" id="notifDot"></span></button>
+          <div class="notif-panel" id="notifPanel">
+            <div class="notif-head"><h4>Notifications</h4><button class="btn btn-ghost btn-sm" id="notifRead">Mark all read</button></div>
+            <div id="notifList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD PAGE -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-sub">Overview of today's milk collection and payments</div>
+          </div>
+          <button class="btn btn-primary" onclick="loadDashboard()">↻ Refresh</button>
+        </div>
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="loading-overlay"><div class="spinner"></div> Loading…</div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card full">
+            <div class="chart-title">Daily Milk Collection Trend (14 days)</div>
+            <div class="chart-sub">Quantity in litres per day</div>
+            <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Morning vs Evening (7 days)</div>
+            <div class="chart-sub">Total litres by session</div>
+            <div class="chart-wrap"><canvas id="chartME"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Top 10 Farmers (30 days)</div>
+            <div class="chart-sub">By total quantity</div>
+            <div class="chart-wrap"><canvas id="chartFarmer"></canvas></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-title">Monthly Payment Summary (6 months)</div>
+            <div class="chart-sub">Total amount paid out</div>
+            <div class="chart-wrap"><canvas id="chartMonthly"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLLECTION PAGE -->
+      <section class="page" id="page-collection">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Milk Collection</div>
+            <div class="page-sub">Record and manage daily milk collection</div>
+          </div>
+          <button class="btn btn-primary" onclick="openCollectionModal()">+ Add Collection</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search farmer…" id="colSearch"></div>
+            <select class="filter-select" id="colFilterSession"><option value="">All Sessions</option><option value="Morning">Morning</option><option value="Evening">Evening</option></select>
+            <input type="date" class="filter-select" id="colFilterDate">
+            <select class="filter-select" id="colSort"><option value="entry_id">Sort: Recent</option><option value="date">Sort: Date</option><option value="quantity">Sort: Quantity</option><option value="fat_percent">Sort: Fat</option><option value="amount">Sort: Amount</option></select>
+            <button class="btn btn-outline btn-sm" onclick="loadCollections()">Apply</button>
+            <button class="btn btn-ghost btn-sm" onclick="clearColFilters()">Clear</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th>Entry ID</th><th>Farmer ID</th><th>Farmer Name</th><th>Date</th><th>Session</th>
+                <th>Qty (L)</th><th>Fat %</th><th>Rate/L</th><th>Amount</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="colBody"><tr><td colspan="11" class="table-empty"><div class="icon">🥛</div>Loading…</td></tr></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="colPagination"></div>
+        </div>
+      </section>
+
+      <!-- FARMERS PAGE -->
+      <section class="page" id="page-farmers">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Farmers</div>
+            <div class="page-sub">Register and manage farmer records</div>
+          </div>
+          <button class="btn btn-primary" onclick="openFarmerModal()">+ Register Farmer</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search by ID, name, phone…" id="farmerSearch"></div>
+            <select class="filter-select" id="farmerVillage"><option value="">All Villages</option></select>
+            <button class="btn btn-outline btn-sm" onclick="loadFarmers()">Apply</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Farmer ID</th><th>Name</th><th>Phone</th><th>Village</th><th>Address</th><th>Bank</th><th>Registered</th><th>Actions</th></tr></thead>
+              <tbody id="farmerBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAYMENTS PAGE -->
+      <section class="page" id="page-payments">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Payments</div>
+            <div class="page-sub">Track and record farmer payments</div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <select class="filter-select" id="payFilterStatus"><option value="">All Statuses</option><option value="Paid">Paid</option><option value="Pending">Pending</option><option value="Partially Paid">Partially Paid</option></select>
+            <button class="btn btn-outline btn-sm" onclick="loadPayments()">Apply</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Farmer ID</th><th>Farmer</th><th>Village</th><th>Total Milk ₹</th><th>Paid</th><th>Pending</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="payBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS PAGE -->
+      <section class="page" id="page-reports">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Reports</div>
+            <div class="page-sub">Generate and export reports</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+          <button class="btn btn-outline" data-report="daily" onclick="loadReport('daily')">Daily</button>
+          <button class="btn btn-outline" data-report="weekly" onclick="loadReport('weekly')">Weekly</button>
+          <button class="btn btn-outline" data-report="monthly" onclick="loadReport('monthly')">Monthly</button>
+          <button class="btn btn-outline" data-report="farmer-wise" onclick="loadReport('farmer-wise')">Farmer-wise</button>
+          <button class="btn btn-outline" data-report="payment" onclick="loadReport('payment')">Payment</button>
+          <button class="btn btn-outline" data-report="quality" onclick="loadReport('quality')">Milk Quality</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div><strong id="reportTitle">Select a report</strong> <span id="reportRange" style="color:var(--text-muted);margin-left:8px"></span></div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm" onclick="printReport()">🖨 Print</button>
+              <button class="btn btn-primary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table><thead id="reportHead"></thead><tbody id="reportBody"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS PAGE -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Settings</div>
+            <div class="page-sub">Configure rate formula and analyzer</div>
+          </div>
+        </div>
+        <div class="chart-card" style="max-width:560px">
+          <div class="chart-title">Rate Formula</div>
+          <div class="chart-sub">Rate per litre = Fat% × Multiplier + Base</div>
+          <div class="form-grid" style="margin-top:16px">
+            <div>
+              <label class="form-label">Multiplier (₹ per fat %)</label>
+              <input type="number" class="form-control" id="setMultiplier" step="0.1">
+            </div>
+            <div>
+              <label class="form-label">Base rate (₹)</label>
+              <input type="number" class="form-control" id="setBase" step="0.1">
+            </div>
+            <div class="full">
+              <label class="form-label">Analyzer mode</label>
+              <select class="form-control" id="setAnalyzer">
+                <option value="simulated">Simulated (auto-generate)</option>
+                <option value="device">Real device (via API)</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:var(--primary-50);border-radius:8px;font-size:14px">
+            Example: Fat 4.5%, multiplier 8, base 0 → Rate = 4.5 × 8 + 0 = <strong>₹36.00/L</strong>
+          </div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

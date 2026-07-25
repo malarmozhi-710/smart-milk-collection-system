@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Milk Collection & Dairy Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="landing">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <nav class="landing-nav">
+    <div class="brand">
+      <div class="brand-logo">🥛</div>
+      <span>DairySmart</span>
+    </div>
+    <a href="login.html" class="btn btn-primary">Login <span>→</span></a>
+  </nav>
+
+  <section class="landing-hero">
+    <div>
+      <div class="hero-eyebrow">🐄 Smart India Hackathon Project</div>
+      <h1 class="hero-title">Digitize village <span>milk collection</span> from cow to cooperative</h1>
+      <p class="hero-sub">A complete dairy management system that records daily milk collection, simulates a milk-quality analyzer, auto-calculates farmer payments, and delivers real-time analytics for cooperative societies.</p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary btn-lg">Try the Demo →</a>
+        <a href="#features" class="btn btn-outline btn-lg">Explore Features</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">20+</div>
+          <div class="hero-stat-label">Sample farmers</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">30 days</div>
+          <div class="hero-stat-label">Collection history</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">Auto</div>
+          <div class="hero-stat-label">Fat analyzer</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-card-img" style="background-image:url('https://images.pexels.com/photos/247786/pexels-photo-247786.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+        <div class="hero-card-title">Today's Collection — M001 Ravi</div>
+        <div class="hero-card-row"><span>Session</span><span style="color:#b45309">Morning</span></div>
+        <div class="hero-card-row"><span>Quantity</span><span>10.0 L</span></div>
+        <div class="hero-card-row"><span>Fat (analyzer)</span><span>4.5%</span></div>
+        <div class="hero-card-row"><span>Rate / L</span><span>₹36.00</span></div>
+        <div class="hero-card-row"><span>Total amount</span><span style="color:var(--primary)">₹360.00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-features" id="features">
+    <h2 class="features-title">Everything a dairy cooperative needs</h2>
+    <p class="features-sub">Built for village collection centers — simple for operators, transparent for farmers.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧪</div>
+        <div class="feature-title">Simulated Milk Analyzer</div>
+        <div class="feature-desc">Auto-generates realistic fat readings (3.0–5.5%). Designed so a real analyzer device can plug in later via API.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Automatic Payment</div>
+        <div class="feature-desc">Rate = Fat% × ₹8 (configurable). Amount, totals and pending balances calculated instantly from the database.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <div class="feature-title">Farmer Management</div>
+        <div class="feature-desc">Register, search, edit and manage farmer records with village, bank details and full history.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Live Dashboard & Charts</div>
+        <div class="feature-desc">KPI cards, daily trends, morning vs evening, farmer-wise and monthly charts — all from real data.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <div class="feature-title">Reports & Export</div>
+        <div class="feature-desc">Daily, weekly, monthly, farmer-wise, payment and quality reports with CSV export and print.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Secure & Role-based</div>
+        <div class="feature-desc">JWT auth, hashed passwords, role-based access for Admin and Farmer, parameterized SQL queries.</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // redirect to app if already logged in
+    const token = localStorage.getItem('token');
+    if (token) window.location.href = 'admin.html';
+  </script>
+</body>
+</html>
