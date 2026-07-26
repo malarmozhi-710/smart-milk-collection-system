@@ -76,7 +76,7 @@ This system replaces manual registers with a secure, accurate, and transparent d
 ### 1. Clone the Repository
 
 ```bash
-git clone [YOUR_GITHUB_REPOSITORY_LINK](https://github.com/malarmozhi-710/smart-milk-collection-system)
+git clone (https://github.com/malarmozhi-710/smart-milk-collection-system)
 ```
 
 ### 2. Open the Project
@@ -261,6 +261,8 @@ MilkCollection
 
 ## Login Page
 
+<img width="1848" height="907" alt="Screenshot 2026-07-26 182321" src="https://github.com/user-attachments/assets/271489f5-58be-454b-b9cd-3b15704c6021" />
+
 ---
 
 ## Administrator Dashboard
@@ -277,7 +279,7 @@ MilkCollection
 
 Project demonstration video:
 
-[**YouTube / Google Drive Link**](https://drive.google.com/file/d/1q5xKthYC4YC9CA6HlBAGNBqSQk2u2Txd/view?usp=sharing)
+[**Google Drive Link**](https://drive.google.com/file/d/1q5xKthYC4YC9CA6HlBAGNBqSQk2u2Txd/view?usp=sharing)
 
 ---
 # 🔮 Future Scope
