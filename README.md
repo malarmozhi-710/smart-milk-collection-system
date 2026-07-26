@@ -15,9 +15,8 @@ This system replaces manual registers with a secure, accurate, and transparent d
 **Application:**  
 [https://smart-milk-collection-system.onrender.com](https://smart-milk-collection-system.onrender.com)
 
-**GitHub Repository:**  
-YOUR_GITHUB_REPOSITORY_LINK
-
+**GitHub Repository:**  [
+](https://github.com/malarmozhi-710/smart-milk-collection-system)
 ---
 
 # ✨ Features
@@ -66,13 +65,10 @@ YOUR_GITHUB_REPOSITORY_LINK
 ### Database
 
 - SQLite
-- Better-SQLite3
 
 ### Authentication
 
 - JWT
-- bcrypt.js
-
 ---
 
 # 🚀 How to Run the Application
@@ -80,7 +76,7 @@ YOUR_GITHUB_REPOSITORY_LINK
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_LINK
+git clone [YOUR_GITHUB_REPOSITORY_LINK](https://github.com/malarmozhi-710/smart-milk-collection-system)
 ```
 
 ### 2. Open the Project
