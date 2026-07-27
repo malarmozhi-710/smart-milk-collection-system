@@ -245,7 +245,12 @@ app.get('/api/farmers/:id', auth, (req, res) => {
 
 app.post('/api/farmers', auth, adminOnly, (req, res) => {
   const { farmer_id, name, phone, village, address, bank_details } = req.body || {};
-  if (!farmer_id || !name) return res.status(400).json({ error: 'farmer_id and name required' });
+  if (!farmer_id || farmer_id.trim() === '') return res.status(400).json({ error: 'farmer_id and name required' });
+  if(!name || name.trim() === '') return res.status(400).json({ error: 'farmer_id and name required' });
+  if(phone && !/^\d{10}$/.test(phone)) return res.status(400).json({ error: 'Invalid phone number' });
+  if(village && village.trim() === '') return res.status(400).json({ error: 'Invalid village' });
+  if(address && address.trim() === '') return res.status(400).json({ error: 'Invalid address' });
+  if(bank_details && bank_details.trim() === '') return res.status(400).json({ error: 'Invalid bank details' });
   const exists = db.prepare('SELECT 1 FROM farmers WHERE farmer_id=?').get(farmer_id);
   if (exists) return res.status(409).json({ error: 'Farmer ID already exists' });
   const regDate = new Date().toISOString().slice(0, 10);
