@@ -251,15 +251,43 @@ app.post('/api/farmers', auth, adminOnly, (req, res) => {
   if(village && village.trim() === '') return res.status(400).json({ error: 'Invalid village' });
   if(address && address.trim() === '') return res.status(400).json({ error: 'Invalid address' });
   if(bank_details && bank_details.trim() === '') return res.status(400).json({ error: 'Invalid bank details' });
-  const exists = db.prepare('SELECT 1 FROM farmers WHERE farmer_id=?').get(farmer_id);
-  if (exists) return res.status(409).json({ error: 'Farmer ID already exists' });
   const regDate = new Date().toISOString().slice(0, 10);
-  db.prepare('INSERT INTO farmers(farmer_id,name,phone,village,address,bank_details,registration_date) VALUES(?,?,?,?,?,?,?)')
-    .run(farmer_id, name, phone || '', village || '', address || '', bank_details || '', regDate);
-  // create farmer login with default password
-  const hash = bcrypt.hashSync('farmer123', 10);
-  try { db.prepare('INSERT INTO users(username,password,role,farmer_id) VALUES(?,?,?,?)').run(farmer_id, hash, 'FARMER', farmer_id); } catch (e) {}
-  res.status(201).json(db.prepare('SELECT * FROM farmers WHERE farmer_id=?').get(farmer_id));
+
+try {
+    db.prepare(
+        'INSERT INTO farmers(farmer_id,name,phone,village,address,bank_details,registration_date) VALUES(?,?,?,?,?,?,?)'
+    ).run(
+        farmer_id,
+        name,
+        phone || '',
+        village || '',
+        address || '',
+        bank_details || '',
+        regDate
+    );
+
+    const hash = bcrypt.hashSync('farmer123', 10);
+    db.prepare(
+        'INSERT INTO users(username,password,role,farmer_id) VALUES(?,?,?,?)'
+    ).run(farmer_id, hash, 'FARMER', farmer_id);
+
+    return res.status(201).json(
+        db.prepare('SELECT * FROM farmers WHERE farmer_id=?').get(farmer_id)
+    );
+
+} catch (err) {
+    if (
+        err.code === 'SQLITE_CONSTRAINT_PRIMARYKEY' ||
+        err.code === 'SQLITE_CONSTRAINT_UNIQUE'
+    ) {
+        return res.status(409).json({
+            error: 'Farmer ID already exists. Another request may have added it.'
+        });
+    }
+
+    console.error(err);
+    return res.status(500).json({ error: 'Internal server error' });
+}
 });
 
 app.put('/api/farmers/:id', auth, adminOnly, (req, res) => {
