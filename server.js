@@ -343,6 +343,20 @@ app.post('/api/collections', auth, adminOnly, (req, res) => {
   const info = db.prepare(`INSERT INTO milk_collection(farmer_id,farmer_name,date,session,quantity,fat_percent,rate,amount,status) VALUES(?,?,?,?,?,?,?,?,?)`)
     .run(farmer_id, farmer.name, date, session, quantity, fat, rate, amount, 'Recorded');
   // notification
+  // Check if collection already exists
+const existing = db.prepare(`
+    SELECT entry_id
+    FROM milk_collection
+    WHERE farmer_id = ?
+      AND date = ?
+      AND session = ?
+`).get(farmer_id, date, session);
+
+if (existing) {
+    return res.status(400).json({
+        error: 'Milk collection for this farmer already exists for this session.'
+    });
+}
   db.prepare('INSERT INTO notifications(type,message) VALUES(?,?)').run('collection', `New collection: ${farmer.name} - ${quantity}L (${session}) - ₹${amount}`);
   res.status(201).json(db.prepare('SELECT * FROM milk_collection WHERE entry_id=?').get(info.lastInsertRowid));
 });
